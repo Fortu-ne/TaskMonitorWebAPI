@@ -1,6 +1,7 @@
 ﻿
     using AutoMapper;
-    using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using TaskMonitorWebAPI.Data;
     using TaskMonitorWebAPI.Dto;
@@ -14,6 +15,9 @@ namespace TaskMonitorWebAPI.Controllers
     {
         [Route("api/[controller]")]
         [ApiController]
+        [Authorize]
+    
+    
         public class ReeminderController : ControllerBase
         {
 

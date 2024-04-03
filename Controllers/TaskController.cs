@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using TaskMonitorWebAPI.Data;
@@ -11,6 +12,7 @@ namespace TaskMonitorWebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class ReminderController : ControllerBase
     {
       
@@ -41,19 +43,19 @@ namespace TaskMonitorWebAPI.Controllers
         }
 
 
-        [HttpGet("{day:DayOfWeek}")]
-        [ProducesResponseType(200)]
-        public IActionResult IndexByDay(DayOfWeek day)
-        {
-            var results = _mapper.Map<List<Tasks>>(_taskRep.DayOfTheWeek(day));
+        //[HttpGet("{day:DayOfWeek}")]
+        //[ProducesResponseType(200)]
+        //public IActionResult IndexByDay(DayOfWeek day)
+        //{
+        //    var results = _mapper.Map<List<Tasks>>(_taskRep.DayOfTheWeek(day));
 
-            if (!ModelState.IsValid)
-            {
+        //    if (!ModelState.IsValid)
+        //    {
 
-                return BadRequest(ModelState);
-            }
-            return Ok(results);
-        }
+        //        return BadRequest(ModelState);
+        //    }
+        //    return Ok(results);
+        //}
 
         [HttpPost]
         [ProducesResponseType(200)]
