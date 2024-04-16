@@ -9,6 +9,12 @@ using TaskMonitorWebAPI.Data;
 using TaskMonitorWebAPI.Interface;
 using TaskMonitorWebAPI.Repository;
 using TaskMonitorWebAPI.Mapping;
+using TaskMonitorWebAPI.Entities;
+using System.Text.Json;
+using TaskMonitorWebAPI;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,7 +22,21 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
-builder.Services.AddSwaggerGen(options =>
+//builder.Services.AddControllers(
+//               //.AddJsonOptions(options =>
+//               //{
+//               //    options.JsonSerializerOptions.Converters.Add(new DateOnlyJsonConverter());
+//               //}
+               
+               
+//               );
+//builder.Services.AddControllers().AddNewtonsoftJson(options =>
+//{
+//    options.SerializerSettings.ContractResolver = new DefaultContractResolver();
+//});
+
+builder.Services.AddSwaggerGen(
+    options =>
 {
 
     options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
@@ -28,30 +48,53 @@ builder.Services.AddSwaggerGen(options =>
     });
 
     options.OperationFilter<SecurityRequirementsOperationFilter>();
-});
+}
+);
 
-
-builder.Services.AddScoped<ITask, TaskRep>();
+// Injection Pool
+builder.Services.AddScoped<IUser, UserRep>();
+builder.Services.AddTransient<ITask, TaskRep>();
 
 
 builder.Services.AddDbContext<DataContext>(op =>
-op.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+op.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")),ServiceLifetime.Singleton);
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddAutoMapper(typeof(ProfileMapper));
+builder.Services.AddCors();
+
+//Background checker
+builder.Services.AddHostedService<BackgroundReminder>();
+
 
 builder.Services.AddAuthorization();
 
-builder.Services.AddIdentityApiEndpoints<IdentityUser>().AddEntityFrameworkStores<DataContext>();
+//builder.Services.AddIdentityApiEndpoints<User>().AddEntityFrameworkStores<DataContext>();
 
-//builder.Services.AddRouting(options =>
-//{
-//    options.ConstraintMap.Add("DayOfWeek", typeof(DayOfWeekConstraint));
-//});
+//JWT Auth 
+builder.Services.AddAuthentication(x =>
+{
+    x.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+    x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+}
+).AddJwtBearer(x => {
+    x.TokenValidationParameters = new TokenValidationParameters
+    {
+
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:Key"]!)),
+        ValidateIssuerSigningKey = true,
+        ValidateAudience = false,
+        ValidateIssuer = false,
+        
+
+    };
+});
+
 var app = builder.Build();
 
-app.MapIdentityApi<IdentityUser>();
+//app.MapIdentityApi<User>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -60,8 +103,11 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+// CORS
+app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:3000"));
 
+app.UseHttpsRedirection();
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

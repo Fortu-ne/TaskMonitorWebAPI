@@ -1,4 +1,7 @@
-﻿using TaskMonitorWebAPI.Data;
+﻿using Microsoft.VisualBasic;
+using System.Collections;
+using TaskMonitorWebAPI.Data;
+using TaskMonitorWebAPI.Dto;
 using TaskMonitorWebAPI.Entities;
 using TaskMonitorWebAPI.Interface;
 
@@ -26,7 +29,7 @@ namespace TaskMonitorWebAPI.Repository
 
         public bool DoesExist(string name)
         {
-            return _context.Tasks.Any(x => x.Name == name);
+            return _context.Tasks.Any(x => x.Title == name);
         }
 
         public bool DoesExist(int id)
@@ -41,7 +44,7 @@ namespace TaskMonitorWebAPI.Repository
 
         public Tasks GetByName(string name)
         {
-           return _context.Tasks.FirstOrDefault(t => t.Name == name);
+           return _context.Tasks.FirstOrDefault(t => t.Title == name);
         }
 
         public bool Save()
@@ -61,9 +64,43 @@ namespace TaskMonitorWebAPI.Repository
             return Save();
         }
 
-        public ICollection<Tasks> DayOfTheWeek(DayOfWeek day)
+        public ICollection<Tasks> GetUpComingTasks(DateOnly referenceDate)
         {
-            return _context.Tasks.Where(r=>r.DeadLine.DayOfWeek == day).ToList();
+            var now = DateTime.Now;
+            return _context.Tasks
+                .Where(t =>                 
+                    (DateOnly.FromDateTime(t.DueDate) == referenceDate /*&& t.DueDate < now.AddHours(24)*/)  ||
+                    (t.ReminderSet && DateOnly.FromDateTime(t.ReminderTime.Value) == referenceDate && t.ReminderTime < now.AddHours(24))
+                )
+                .ToList();
+        }
+
+        public ICollection<Tasks> GetUpComingTasks()
+        {
+            
+                var now = DateTime.Now; // Get current time
+
+            /*
+             * currnet date : 2024-04-15 10:10
+             * reminder date : 2024-04-15 10:20
+             * due date : 2024-04-15 10:30
+             * 
+             * if(
+             * 
+             */
+
+            return _context.Tasks
+            .Where(t =>
+          // Filter based on reminder and due date
+          (t.DueDate >= now && t.DueDate < now.AddHours(24)) ||
+          (t.ReminderSet && t.ReminderTime >= now && t.ReminderTime < now.AddHours(24))
+            ).ToList();
+
+        }
+
+        public ICollection<Tasks> GetAllByPriorities(Priorities request)
+        {
+            return _context.Tasks.Where(r=>r.Priorities == request).ToList();
         }
     }
 }
