@@ -12,8 +12,8 @@ using TaskMonitorWebAPI.Data;
 namespace TaskMonitorWebAPI.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240412095451_init1")]
-    partial class init1
+    [Migration("20240420062646_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -94,14 +94,17 @@ namespace TaskMonitorWebAPI.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Address")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("Residential Address");
 
                     b.Property<DateOnly>("DateOfBirth")
-                        .HasColumnType("date");
+                        .HasColumnType("date")
+                        .HasColumnName("DOB");
 
                     b.Property<string>("EmailAddress")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("Email Address");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -109,7 +112,8 @@ namespace TaskMonitorWebAPI.Migrations
 
                     b.Property<string>("PasswordHash")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("Password");
 
                     b.Property<string>("Roles")
                         .IsRequired()

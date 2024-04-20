@@ -52,7 +52,7 @@ namespace TaskMonitorWebAPI.Controllers
                 UserName = request.UserName,
                 EmailAddress = request.Email,
                 Address = request.Address,
-                PasswordHash = passwordHash,
+                Password = passwordHash,
                 DateOfBirth = dob,
                 age = ageCalc
             };
@@ -109,7 +109,7 @@ namespace TaskMonitorWebAPI.Controllers
                     return BadRequest("User not found");
                 }
 
-                if (!BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
+                if (!BCrypt.Net.BCrypt.Verify(request.Password, user.Password))
                 {
                     return BadRequest("wrong password");
                 }

@@ -1,4 +1,6 @@
-﻿namespace TaskMonitorWebAPI.Dto
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace TaskMonitorWebAPI.Dto
 {
     public class Register
     {
@@ -6,6 +8,7 @@
         public string Surname { get; set; } = String.Empty;
         public string Username { get; set; } = String.Empty;
         public int age { get; set; }
+        [EmailAddress]
         public string EmailAddress { get; set; }  = String.Empty;
         public string DateOfBirth { get; set; } = String.Empty;
         public string? Address { get; set; }

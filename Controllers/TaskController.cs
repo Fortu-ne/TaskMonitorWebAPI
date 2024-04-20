@@ -21,7 +21,7 @@ namespace TaskMonitorWebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize]
+    [Authorize]
     public class TaskController : ControllerBase
     {
 
@@ -66,7 +66,7 @@ namespace TaskMonitorWebAPI.Controllers
         [ProducesResponseType(200)]
         public IActionResult IndexByReminder()
         {
-            SetTimer();
+           
             var results = _mapper.Map<List<Tasks>>(_taskRep.GetUpComingTasks());
 
             if (!ModelState.IsValid)
@@ -246,6 +246,26 @@ namespace TaskMonitorWebAPI.Controllers
 
 
             return Ok(task);
+        }
+
+
+
+        [HttpGet("Users/{id:int}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(500)]
+
+        public IActionResult GetTaskByUser(int id)
+        {    
+
+            var results = _mapper.Map<List<Tasks>>(_taskRep.GetByUserId(id));
+
+            if (!ModelState.IsValid)
+            {
+
+                return BadRequest(ModelState);
+            }
+            return Ok(results);
+
         }
 
 

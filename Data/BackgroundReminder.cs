@@ -49,6 +49,8 @@ namespace TaskMonitorWebAPI.Data
 
                         }
                       
+                        // 10:00
+                        // 08:00
                     }
                 }
             }
@@ -89,6 +91,8 @@ namespace TaskMonitorWebAPI.Data
                 MailMessage message = new MailMessage(clientEmail, user.EmailAddress);
                 message.Subject = subject;
                 message.Body = body;
+
+                //method retrieve all users bask by add
 
                 try
                 {

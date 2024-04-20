@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace TaskMonitorWebAPI.Migrations
 {
     /// <inheritdoc />
-    public partial class init1 : Migration
+    public partial class init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -31,12 +31,12 @@ namespace TaskMonitorWebAPI.Migrations
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Surname = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    EmailAddress = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    EmailAddress = table.Column<string>(name: "Email Address", type: "nvarchar(max)", nullable: false),
                     age = table.Column<int>(type: "int", nullable: false),
                     Roles = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    DateOfBirth = table.Column<DateOnly>(type: "date", nullable: false),
-                    Address = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    DOB = table.Column<DateOnly>(type: "date", nullable: false),
+                    ResidentialAddress = table.Column<string>(name: "Residential Address", type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {

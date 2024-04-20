@@ -87,13 +87,15 @@ namespace TaskMonitorWebAPI.Repository
              * 
              * if(
              * 
+             * 
+             * 
              */
 
             return _context.Tasks
             .Where(t =>
           // Filter based on reminder and due date
-          (t.DueDate >= now && t.DueDate < now.AddHours(24)) ||
-          (t.ReminderSet && t.ReminderTime >= now && t.ReminderTime < now.AddHours(24))
+          (t.DueDate >= now && t.DueDate < now.AddHours(2)) ||
+          (t.ReminderSet && t.ReminderTime >= now && t.ReminderTime < now.AddHours(2))
             ).ToList();
 
         }
@@ -102,5 +104,28 @@ namespace TaskMonitorWebAPI.Repository
         {
             return _context.Tasks.Where(r=>r.Priorities == request).ToList();
         }
+
+        public ICollection<Tasks> GetByUserId(int id)
+        {
+            return _context.Tasks.Where(r=>r.UserId1 == id).ToList();
+        }
+
+        public ICollection<Tasks> CheckForWeeklyTasks()
+        {
+            var date =  DateTime.Now;
+
+            if(date.DayOfWeek == DayOfWeek.Sunday)
+            {
+                var startingDay = date.AddDays(1);
+
+                var endingDay = date.AddDays(7).AddHours(23).AddMinutes(59);
+
+                return _context.Tasks.Where(r=>r.DueDate >= startingDay && r.DueDate < endingDay).ToList();
+            }
+
+            return _context.Tasks.ToList();
+        }
+
+     
     }
 }

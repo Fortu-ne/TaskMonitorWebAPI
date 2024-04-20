@@ -22,18 +22,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
-//builder.Services.AddControllers(
-//               //.AddJsonOptions(options =>
-//               //{
-//               //    options.JsonSerializerOptions.Converters.Add(new DateOnlyJsonConverter());
-//               //}
-               
-               
-//               );
-//builder.Services.AddControllers().AddNewtonsoftJson(options =>
-//{
-//    options.SerializerSettings.ContractResolver = new DefaultContractResolver();
-//});
+
 
 builder.Services.AddSwaggerGen(
     options =>
