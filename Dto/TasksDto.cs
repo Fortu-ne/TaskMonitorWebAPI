@@ -7,7 +7,8 @@ namespace TaskMonitorWebAPI.Dto
 {
     public class TasksDto
     {
-       
+
+        public int Id { get; set; }
         public String Title { get; set; } = String.Empty;
         public String Description { get; set; } = string.Empty;
         public string DueDate { get; set; } = String.Empty;

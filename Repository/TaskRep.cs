@@ -1,5 +1,7 @@
-﻿using Microsoft.VisualBasic;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualBasic;
 using System.Collections;
+using System.Threading.Tasks;
 using TaskMonitorWebAPI.Data;
 using TaskMonitorWebAPI.Dto;
 using TaskMonitorWebAPI.Entities;
@@ -24,7 +26,7 @@ namespace TaskMonitorWebAPI.Repository
         public bool Delete(Tasks task)
         {
             _context.Tasks.Remove(task);
-            return Save();
+            return Save();  
         }
 
         public bool DoesExist(string name)
@@ -55,19 +57,38 @@ namespace TaskMonitorWebAPI.Repository
 
         public ICollection<Tasks> GetAll()
         {
-            return _context.Tasks.ToList();
+            return _context.Tasks.AsNoTracking().ToList();
         }
 
         public bool Update(Tasks tasks)
         {
-            _context.Tasks.Update(tasks);
-            return Save();
+
+          var model = GetById(tasks.Id);
+
+          model.Title = tasks.Title;
+          model.Description = tasks.Description;
+          model.Priorities = tasks.Priorities;
+          model.ReminderSet = tasks.ReminderSet;
+          model.Priorities = tasks.Priorities;
+          model.Completed = tasks.Completed;
+          model.DueDate = tasks.DueDate;
+          model.Id = tasks.Id;
+          model.UserId1 = tasks.UserId1;
+          model.ReminderTime = tasks.ReminderTime;
+          model.CreatedDate = tasks.CreatedDate;
+
+
+        if(model != null)
+                _context.Tasks.Update(model);
+                  
+                return Save();
         }
+
 
         public ICollection<Tasks> GetUpComingTasks(DateOnly referenceDate)
         {
             var now = DateTime.Now;
-            return _context.Tasks
+            return _context.Tasks.AsNoTracking()
                 .Where(t =>                 
                     (DateOnly.FromDateTime(t.DueDate) == referenceDate /*&& t.DueDate < now.AddHours(24)*/)  ||
                     (t.ReminderSet && DateOnly.FromDateTime(t.ReminderTime.Value) == referenceDate && t.ReminderTime < now.AddHours(24))
@@ -91,7 +112,7 @@ namespace TaskMonitorWebAPI.Repository
              * 
              */
 
-            return _context.Tasks
+            return _context.Tasks.AsNoTracking()
             .Where(t =>
           // Filter based on reminder and due date
           (t.DueDate >= now && t.DueDate < now.AddHours(2)) ||
@@ -102,12 +123,12 @@ namespace TaskMonitorWebAPI.Repository
 
         public ICollection<Tasks> GetAllByPriorities(Priorities request)
         {
-            return _context.Tasks.Where(r=>r.Priorities == request).ToList();
+            return _context.Tasks.AsNoTracking().Where(r=>r.Priorities == request).ToList();
         }
 
         public ICollection<Tasks> GetByUserId(int id)
         {
-            return _context.Tasks.Where(r=>r.UserId1 == id).ToList();
+            return _context.Tasks.AsNoTracking().Where(r=>r.UserId1 == id).ToList();
         }
 
         public ICollection<Tasks> CheckForWeeklyTasks()
@@ -120,10 +141,10 @@ namespace TaskMonitorWebAPI.Repository
 
                 var endingDay = date.AddDays(7).AddHours(23).AddMinutes(59);
 
-                return _context.Tasks.Where(r=>r.DueDate >= startingDay && r.DueDate < endingDay).ToList();
+                return _context.Tasks.AsNoTracking().Where(r=>r.DueDate >= startingDay && r.DueDate < endingDay).ToList();
             }
 
-            return _context.Tasks.ToList();
+            return _context.Tasks.AsNoTracking().ToList();
         }
 
      

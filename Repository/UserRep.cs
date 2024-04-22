@@ -27,7 +27,7 @@ namespace TaskMonitorWebAPI.Repository
 
         public User Find(string email)
         {
-            return _context.User.Where(r => r.EmailAddress.Trim().ToUpper() == email.ToUpper().TrimEnd()).FirstOrDefault();
+            return _context.User.Where(r => r.EmailAddress.ToLower() == email.ToLower()).FirstOrDefault();
         }
 
         public IEnumerable<User> GetAll()

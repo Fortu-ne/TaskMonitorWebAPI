@@ -26,18 +26,18 @@ builder.Services.AddControllers();
 
 builder.Services.AddSwaggerGen(
     options =>
-{
-
-    options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
     {
-        In = ParameterLocation.Header,
-        Name = "Authorization",
-        Type = SecuritySchemeType.ApiKey,
 
-    });
+        options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
+        {
+            In = ParameterLocation.Header,
+            Name = "Authorization",
+            Type = SecuritySchemeType.ApiKey,
 
-    options.OperationFilter<SecurityRequirementsOperationFilter>();
-}
+        });
+
+        options.OperationFilter<SecurityRequirementsOperationFilter>();
+    }
 );
 
 // Injection Pool
@@ -46,7 +46,7 @@ builder.Services.AddTransient<ITask, TaskRep>();
 
 
 builder.Services.AddDbContext<DataContext>(op =>
-op.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")),ServiceLifetime.Singleton);
+op.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")), ServiceLifetime.Singleton);
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -76,7 +76,7 @@ builder.Services.AddAuthentication(x =>
         ValidateIssuerSigningKey = true,
         ValidateAudience = false,
         ValidateIssuer = false,
-        
+
 
     };
 });

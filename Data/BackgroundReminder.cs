@@ -43,12 +43,28 @@ namespace TaskMonitorWebAPI.Data
                     {
                         var reminderDeadline = task.DueDate.Subtract(task.ReminderTime.Value);
 
-                        if(task.ReminderSet && DateTime.Now.TimeOfDay >= reminderDeadline)
+                        if (task.ReminderSet && DateTime.Now.TimeOfDay >= reminderDeadline)
                         {
-                             SendTaskReminder(task);
+                            SendTaskReminder(task);
 
                         }
-                      
+
+
+                        if (DateTime.Now.AddHours(-2) >= task.DueDate.Subtract(TimeSpan.FromHours(2)))
+                        {
+                            var randomDelay = TimeSpan.FromMinutes(new Random().Next(0, 120)); // Random delay between 0 and 2 hours
+                            Task.Delay(randomDelay);
+                            SendTaskReminder(task);
+                        }
+
+
+                        if (task.DueDate.Date == DateTime.Now.AddDays(1).Date &&   task.DueDate.TimeOfDay >= new TimeSpan(22, 0, 0) && task.DueDate.TimeOfDay < new TimeSpan(22, 59, 0)) // Ensure less than 23:00 for reminders within the hour
+                        {
+                            // Introduce a random delay within the target hour (22:00-23:00)
+                            var randomDelay = TimeSpan.FromMinutes(new Random().Next(0, 60)); // Random delay between 0 and 59 minutes
+                            Task.Delay(randomDelay);
+                            SendTaskReminder(task);
+                        }
                         // 10:00
                         // 08:00
                     }
@@ -117,6 +133,8 @@ namespace TaskMonitorWebAPI.Data
         {
             _timer?.Dispose();
         }
+
+        
     }
 
 }
